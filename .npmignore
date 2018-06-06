@@ -1,0 +1,4 @@
+dist
+yarn-error.log
+webpack.config.ts
+tsconfig.json
