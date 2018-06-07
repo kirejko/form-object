@@ -2,7 +2,7 @@ import path from 'path';
 import webpack from 'webpack';
 
 const config: webpack.Configuration = {
-  mode: 'development',
+  mode: 'production',
   entry: path.resolve(__dirname, 'src/Form.ts'),
   output: {
     path: path.resolve(__dirname, 'dist'),

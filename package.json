@@ -9,7 +9,7 @@
   "main": "./dist/index.js",
   "typings": "./index.d.ts",
   "scripts": {
-    "build": "webpack --config webpack.config.ts --mode development",
+    "build": "webpack --config webpack.config.ts --mode production",
     "prepublish": "yarn build"
   },
   "license": "MIT",
