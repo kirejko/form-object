@@ -1,8 +1,8 @@
 import {AxiosError, AxiosPromise, AxiosRequestConfig, AxiosResponse} from 'axios';
 import axios from './helpers/axios';
-import FormMethods from './helpers/form-methods';
+import {FormMethods} from './helpers/form-methods';
 import Errors from './Errors';
-import {Form as FormInterface, RequestPayload} from '../index';
+import FormInterface, {RequestPayload} from '../index';
 
 export default class Form implements FormInterface {
   readonly originalData: object;

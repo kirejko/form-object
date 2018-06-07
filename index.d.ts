@@ -1,5 +1,5 @@
 import {AxiosPromise, AxiosRequestConfig} from 'axios';
-import FormMethods from './src/helpers/form-methods';
+import {FormMethods} from './src/helpers/form-methods';
 
 export type RequestPayload = FormData | object
 
@@ -19,13 +19,11 @@ export interface Errors {
   clear(field?: string): void;
 }
 
-export interface Form {
+export default interface Form {
   readonly originalData: object
   payload: object;
   isPending: boolean;
   errors: Errors;
-
-  [key: string]: any;
 
   submit(
     method: FormMethods,

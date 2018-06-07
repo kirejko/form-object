@@ -2,23 +2,20 @@
   "compileOnSave": true,
   "compilerOptions": {
     "noImplicitAny": false,
-    "target": "ES5",
+    "target": "es5",
     "moduleResolution": "node",
     "lib": [
-      "es2015",
-      "es2017",
-      "es2018",
+      "esnext",
       "dom"
     ],
     "removeComments": true,
-    "preserveConstEnums": true,
-    "sourceMap": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "outDir": "dist"
+    "outDir": "./dist/"
   },
-  "include": [
-    "src/**/*"
+  "files": [
+    "src/Form.ts",
+    "index.d.ts"
   ],
   "exclude": [
     "node_modules"

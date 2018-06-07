@@ -1,4 +1,6 @@
 .idea
+.babelrc
+.editorconfig
 yarn-error.log
 webpack.config.ts
 tsconfig.json
