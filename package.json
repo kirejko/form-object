@@ -1,6 +1,6 @@
 {
   "name": "form-object-wrapper",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Form obect warapper",
   "author": {
     "email": "kirejko@gmail.com",
@@ -15,9 +15,11 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "axios": "^0.18.0"
+    "axios": "^0.18.0",
+    "lodash": "^4.17.10"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.109",
     "@types/node": "^10.3.1",
     "@types/webpack": "^4.4.0",
     "babel-core": "^6.26.3",
