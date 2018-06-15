@@ -1,54 +1,43 @@
 import {AxiosError, AxiosPromise, AxiosRequestConfig, AxiosResponse} from 'axios';
 import axios from './helpers/axios';
-import {FormMethods} from './helpers/form-methods';
-import Errors from './Errors';
-import FormInterface, {RequestPayload} from '../index';
+import {HttpMethod} from './helpers/http_method';
+import {RequestPayload} from './helpers/request_payload';
+import {Errors} from './Errors';
+import {cloneDeep} from 'lodash';
 
-export default class Form implements FormInterface {
+export class Form {
   readonly originalData: object;
+  payload: object;
   isPending: boolean = false;
-  errors = new Errors();
+  errors: Errors = new Errors();
 
   /**
    * Form constructor
    *
    * @param {object} data
    */
-  public constructor(data: object = {}) {
-    this.originalData = Object.assign({}, data);
+  constructor(data: object) {
+    this.originalData = cloneDeep(data);
+    this.payload = cloneDeep(data);
 
-    for (let field in data) {
-      this[field] =
-        typeof data[field] === 'object'
-          ? Object.assign({}, data[field])
-          : data[field];
-    }
-  }
+    return new Proxy(this, {
+      get(target: Form, prop: PropertyKey) {
+        if (target.propertyExists(prop)) {
+          return target.payload[prop];
+        }
 
-  /**
-   * Get form payload
-   *
-   * @returns {object}
-   */
-  get payload(): object {
-    let payload: object = {};
+        return 'function' === typeof target[prop]
+          ? (...args) => target[prop].apply(target, args)
+          : undefined;
+      },
+      set(target: Form, prop: PropertyKey, value: any) {
+        if (target.propertyExists(prop)) {
+          target.payload[prop] = value;
+        }
 
-    for (let field in this.originalData) {
-      payload[field] = this[field];
-    }
-
-    return payload;
-  }
-
-  /**
-   *
-   * @param {string} url
-   * @param {AxiosRequestConfig} config
-   *
-   * @returns {Promise<any>}
-   */
-  public get(url: string, config?: AxiosRequestConfig): Promise<any> {
-    return this.submit(FormMethods.GET, url, config);
+        return true;
+      }
+    });
   }
 
   /**
@@ -56,10 +45,10 @@ export default class Form implements FormInterface {
    * @param {string} url
    * @param {AxiosRequestConfig} config
    *
-   * @returns {Promise<any>}
+   * @returns {AxiosPromise<any>}
    */
-  public post(url: string, config?: AxiosRequestConfig): Promise<any> {
-    return this.submit(FormMethods.POST, url, config);
+  public get(url: string, config?: AxiosRequestConfig): AxiosPromise<any> {
+    return this.submit(HttpMethod.GET, url, config);
   }
 
   /**
@@ -67,10 +56,10 @@ export default class Form implements FormInterface {
    * @param {string} url
    * @param {AxiosRequestConfig} config
    *
-   * @returns {Promise<any>}
+   * @returns {AxiosPromise<any>}
    */
-  public put(url: string, config?: AxiosRequestConfig): Promise<any> {
-    return this.submit(FormMethods.PUT, url, config);
+  public post(url: string, config?: AxiosRequestConfig): AxiosPromise<any> {
+    return this.submit(HttpMethod.POST, url, config);
   }
 
   /**
@@ -78,10 +67,10 @@ export default class Form implements FormInterface {
    * @param {string} url
    * @param {AxiosRequestConfig} config
    *
-   * @returns {Promise<any>}
+   * @returns {AxiosPromise<any>}
    */
-  public patch(url: string, config?: AxiosRequestConfig): Promise<any> {
-    return this.submit(FormMethods.PATCH, url, config);
+  public put(url: string, config?: AxiosRequestConfig): AxiosPromise<any> {
+    return this.submit(HttpMethod.PUT, url, config);
   }
 
   /**
@@ -89,23 +78,34 @@ export default class Form implements FormInterface {
    * @param {string} url
    * @param {AxiosRequestConfig} config
    *
-   * @returns {Promise<any>}
+   * @returns {AxiosPromise<any>}
    */
-  public delete(url: string, config?: AxiosRequestConfig): Promise<any> {
-    return this.submit(FormMethods.DELETE, url, config);
+  public patch(url: string, config?: AxiosRequestConfig): AxiosPromise<any> {
+    return this.submit(HttpMethod.PATCH, url, config);
+  }
+
+  /**
+   *
+   * @param {string} url
+   * @param {AxiosRequestConfig} config
+   *
+   * @returns {AxiosPromise<any>}
+   */
+  public delete(url: string, config?: AxiosRequestConfig): AxiosPromise<any> {
+    return this.submit(HttpMethod.DELETE, url, config);
   }
 
   /**
    * Submit the form.
    *
-   * @param {FormMethods} method
+   * @param {HttpMethod} method
    * @param {string} url
    * @param {AxiosRequestConfig} config
    *
    * @returns {AxiosPromise<any>}
    */
   public submit(
-    method: FormMethods,
+    method: HttpMethod,
     url: string,
     config: AxiosRequestConfig = {}
   ): AxiosPromise<any> {
@@ -115,7 +115,7 @@ export default class Form implements FormInterface {
     let data = this.formData();
     if (data instanceof FormData) {
       data.append('_method', method);
-      method = FormMethods.POST;
+      method = HttpMethod.POST;
     }
 
     const requestConfig: AxiosRequestConfig = Object.assign(
@@ -144,9 +144,7 @@ export default class Form implements FormInterface {
    * @returns {void}
    */
   public reset(): void {
-    for (let field in this.originalData) {
-      this[field] = this.originalData[field];
-    }
+    this.payload = cloneDeep(this.originalData);
 
     this.errors.clear();
   }
@@ -168,6 +166,14 @@ export default class Form implements FormInterface {
     }
 
     return formData;
+  }
+
+  /**
+   * @param {PropertyKey} propertyName
+   * @returns {boolean}
+   */
+  public propertyExists(propertyName: PropertyKey): boolean {
+    return this.originalData.hasOwnProperty(propertyName);
   }
 
   /**

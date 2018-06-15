@@ -3,7 +3,7 @@ import webpack from 'webpack';
 
 const config: webpack.Configuration = {
   mode: 'production',
-  entry: path.resolve(__dirname, 'src/Form.ts'),
+  entry: path.resolve(__dirname, 'entry.ts'),
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'index.js',

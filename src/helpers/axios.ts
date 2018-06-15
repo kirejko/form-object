@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-const token: HTMLMetaElement = document.head.querySelector('meta[name="csrf-token"]');
+const token: Element | null = document.head.querySelector('meta[name="csrf-token"]');
 
-if (token) {
+if (token instanceof HTMLMetaElement) {
   axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
   axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 } else {

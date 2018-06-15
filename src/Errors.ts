@@ -1,6 +1,4 @@
-import {Errors as ErrorsInterface} from '../index';
-
-export default class Errors implements ErrorsInterface {
+export class Errors {
   public errors: object;
 
   /**

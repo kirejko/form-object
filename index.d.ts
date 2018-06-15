@@ -1,47 +1,58 @@
-import {AxiosPromise, AxiosRequestConfig} from 'axios';
-import {FormMethods} from './src/helpers/form-methods';
+import {AxiosError, AxiosPromise, AxiosRequestConfig, AxiosResponse} from "axios";
+import {HttpMethod} from "./src/helpers/http_method";
+import {RequestPayload} from "./src/helpers/request_payload";
 
-export type RequestPayload = FormData | object
+export class Errors {
+  public errors: object;
 
-export interface Errors {
-  errors: object;
+  public constructor(errors: object = {});
 
-  record(errors: object): void;
+  public record(errors: object = {}): void;
 
-  has(filed: string): boolean;
+  public has(field: string): boolean;
 
-  any(): boolean;
+  public any(): boolean;
 
-  get(field: string): string[] | string | undefined;
+  public get(field: string): string[] | string | undefined;
 
-  getFirst(filed: string): string | undefined;
+  public getFirst(field: string): string | undefined;
 
-  clear(field?: string): void;
+  public clear(field?: string): void;
 }
 
-export default interface Form {
-  readonly originalData: object
-  payload: object;
-  isPending: boolean;
-  errors: Errors;
+export default class Form {
+  readonly originalData: object;
+  public payload: object;
+  public isPending: boolean;
+  public errors: Errors;
 
-  submit(
-    method: FormMethods,
+  constructor(data: object);
+
+  public get(url: string, config?: AxiosRequestConfig): AxiosPromise<any>;
+
+  public post(url: string, config?: AxiosRequestConfig): AxiosPromise<any>;
+
+  public patch(url: string, config?: AxiosRequestConfig): AxiosPromise<any>;
+
+  public put(url: string, config?: AxiosRequestConfig): AxiosPromise<any>;
+
+  public delete(url: string, config?: AxiosRequestConfig): AxiosPromise<any>;
+
+  public submit(
+    method: HttpMethod,
     url: string,
-    config: AxiosRequestConfig
-  ): Promise<any>;
+    config: AxiosRequestConfig = {}
+  ): AxiosPromise<any>;
 
-  get(url: string, config?: AxiosRequestConfig): AxiosPromise<any>;
+  public reset(): void;
 
-  post(url: string, config?: AxiosRequestConfig): AxiosPromise<any>;
+  public formData(): RequestPayload;
 
-  patch(url: string, config?: AxiosRequestConfig): AxiosPromise<any>;
+  public propertyExists(propertyName: PropertyKey): boolean;
 
-  put(url: string, config?: AxiosRequestConfig): AxiosPromise<any>;
+  protected onSuccess(response: AxiosResponse): void;
 
-  delete(url: string, config?: AxiosRequestConfig): AxiosPromise<any>;
+  protected onFail({response: {data = {}}}: AxiosError): void;
 
-  formData(): FormData | object;
-
-  reset(): void;
+  private hasFiles(): boolean;
 }
