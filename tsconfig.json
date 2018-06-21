@@ -2,7 +2,7 @@
   "compileOnSave": true,
   "compilerOptions": {
     "noImplicitAny": false,
-    "target": "es5",
+    "target": "es6",
     "moduleResolution": "node",
     "lib": [
       "esnext",
@@ -13,9 +13,8 @@
     "allowSyntheticDefaultImports": true,
     "outDir": "./dist/"
   },
-  "files": [
-    "src/Form.ts",
-    "index.d.ts"
+  "include": [
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules"

@@ -2,12 +2,12 @@ import {AxiosError, AxiosPromise, AxiosRequestConfig, AxiosResponse} from "axios
 import {HttpMethod} from "./src/helpers/http_method";
 import {RequestPayload} from "./src/helpers/request_payload";
 
-export class Errors {
-  public errors: object;
+export class Errors<T extends object> {
+  public errors: T;
 
-  public constructor(errors: object = {});
+  public constructor(errors: T = <T>{});
 
-  public record(errors: object = {}): void;
+  public record(errors: T = <T>{}): void;
 
   public has(field: string): boolean;
 
@@ -20,13 +20,13 @@ export class Errors {
   public clear(field?: string): void;
 }
 
-export default class Form {
-  readonly originalData: object;
-  public payload: object;
+export default class Form<T extends object> {
+  readonly originalData: T;
+  public payload: T;
   public isPending: boolean;
   public errors: Errors;
 
-  constructor(data: object);
+  constructor(data: T);
 
   public get(url: string, config?: AxiosRequestConfig): AxiosPromise<any>;
 

@@ -1,5 +1,6 @@
 import path from 'path';
 import webpack from 'webpack';
+import CleanWebpackPlugin from 'clean-webpack-plugin';
 
 const config: webpack.Configuration = {
   mode: 'production',
@@ -13,7 +14,6 @@ const config: webpack.Configuration = {
   resolve: {
     extensions: ['.ts', '.js']
   },
-  devtool: 'source-map',
   module: {
     rules: [
       {
@@ -22,7 +22,10 @@ const config: webpack.Configuration = {
         exclude: /node_modules/
       },
     ]
-  }
+  },
+  plugins: [
+    new CleanWebpackPlugin('dist'),
+  ],
 };
 
 export default config;

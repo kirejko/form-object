@@ -9,7 +9,7 @@
   "main": "./dist/index.js",
   "typings": "./index.d.ts",
   "scripts": {
-    "build": "webpack --config webpack.config.ts --mode production",
+    "build": "webpack --config webpack.config.ts --mode production --hide-modules --progress",
     "prepublish": "yarn build"
   },
   "license": "MIT",
@@ -19,6 +19,7 @@
     "lodash": "^4.17.10"
   },
   "devDependencies": {
+    "@types/clean-webpack-plugin": "^0.1.2",
     "@types/lodash": "^4.14.109",
     "@types/node": "^10.3.1",
     "@types/webpack": "^4.4.0",
@@ -26,6 +27,7 @@
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
+    "clean-webpack-plugin": "^0.1.19",
     "ts-loader": "^4.3.1",
     "ts-node": "^6.1.0",
     "typescript": "^2.9.1",

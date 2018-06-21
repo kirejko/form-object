@@ -112,14 +112,21 @@ export class Form {
     this.isPending = true;
     this.errors.clear();
 
-    let data = this.formData();
+    let data: RequestPayload = this.formData();
+
     if (data instanceof FormData) {
       data.append('_method', method);
       method = HttpMethod.POST;
     }
 
-    const requestConfig: AxiosRequestConfig = Object.assign(
-      {url, method, data},
+    let requestConfig: AxiosRequestConfig = {url, method};
+    type DataKey = keyof AxiosRequestConfig['params'] | keyof AxiosRequestConfig['data']
+    const dataKey: DataKey = method === HttpMethod.GET ? 'params' : 'data';
+
+    requestConfig[dataKey] = data;
+
+    requestConfig = Object.assign(
+      requestConfig,
       config,
     );
 
