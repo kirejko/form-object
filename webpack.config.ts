@@ -1,6 +1,5 @@
 import path from 'path';
 import webpack from 'webpack';
-import CleanWebpackPlugin from 'clean-webpack-plugin';
 
 const config: webpack.Configuration = {
   mode: 'production',
@@ -23,9 +22,6 @@ const config: webpack.Configuration = {
       },
     ]
   },
-  plugins: [
-    new CleanWebpackPlugin('dist'),
-  ],
 };
 
 export default config;
