@@ -2,6 +2,7 @@ import {AxiosError, AxiosPromise, AxiosRequestConfig, AxiosResponse} from 'axios
 import axios from './helpers/axios';
 import {HttpMethod} from './helpers/http_method';
 import {RequestPayload} from './helpers/request_payload';
+import {RequestDataKey} from './helpers/request_data_key';
 import {Errors} from './Errors';
 import {cloneDeep} from 'lodash';
 
@@ -120,8 +121,7 @@ export class Form {
     }
 
     let requestConfig: AxiosRequestConfig = {url, method};
-    type DataKey = keyof AxiosRequestConfig['params'] | keyof AxiosRequestConfig['data']
-    const dataKey: DataKey = method === HttpMethod.GET ? 'params' : 'data';
+    const dataKey: RequestDataKey = method === HttpMethod.GET ? 'params' : 'data';
 
     requestConfig[dataKey] = data;
 
