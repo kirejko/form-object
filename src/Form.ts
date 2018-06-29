@@ -23,6 +23,10 @@ export class Form {
 
     return new Proxy(this, {
       get(target: Form, prop: PropertyKey) {
+        if (['originData', 'payload'].includes(<string>prop)) {
+          return target[prop];
+        }
+
         if (target.propertyExists(prop)) {
           return target.payload[prop];
         }
