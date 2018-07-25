@@ -1,5 +1,5 @@
 import axios from 'axios';
-import promiseFinally = require('promise.prototype.finally');
+import promiseFinally from 'promise.prototype.finally';
 
 promiseFinally.shim();
 
