@@ -24,7 +24,6 @@ describe('Form class', () => {
   before(() => server = express.listen(3000));
   after(() => server.close());
 
-
   describe('creation instance', () => {
     it('should store payload and original data', () => {
       form = new Form(initData);
