@@ -3,8 +3,8 @@ import {expect} from 'chai';
 import {Errors} from '../src/Errors';
 
 describe('Errors class', () => {
-  let errorsObject;
-  const errorResponse = {
+  let errorsObject: Errors;
+  const errorResponse: object = {
     inputName: ['Error message'],
     multipleErrorInput: ['Some error message', 'Other error message']
   };

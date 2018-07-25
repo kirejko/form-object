@@ -1,48 +1,54 @@
 import {AxiosError, AxiosPromise, AxiosRequestConfig, AxiosResponse} from 'axios';
 import axios from './helpers/axios';
 import {HttpMethod} from './helpers/http_method';
-import {RequestPayload} from './helpers/request_payload';
+import {DataType, RequestPayload} from './helpers/types';
 import {RequestDataKey} from './helpers/request_data_key';
 import {Errors} from './Errors';
 import {cloneDeep} from 'lodash';
 
 export class Form {
-  readonly originalData: object;
-  payload: object;
+  readonly originalData: DataType;
+  payload: DataType;
   isPending: boolean = false;
   errors: Errors = new Errors();
+
+  [key: string]: any;
+
+  private proxyHandler: ProxyHandler<Form> = {
+    get(target: Form, prop: PropertyKey): any {
+      const property = Reflect.get(target, prop);
+
+      if (['originalData', 'payload', 'errors', 'isPending'].includes(<string>prop)) {
+        return property;
+      }
+
+      if (target.propertyExists(prop)) {
+        return Reflect.get(target.payload, prop);
+      }
+
+      return 'function' === typeof property
+        ? (...args) => Reflect.apply(property, target, args)
+        : undefined;
+    },
+    set(target: Form, prop: PropertyKey, value: any): boolean {
+      if (target.propertyExists(prop)) {
+        Reflect.set(target.payload, prop, value);
+      }
+
+      return true;
+    }
+  };
 
   /**
    * Form constructor
    *
-   * @param {object} data
+   * @param {DataType} data
    */
-  constructor(data: object) {
+  constructor(data: DataType) {
     this.originalData = cloneDeep(data);
     this.payload = cloneDeep(data);
 
-    return new Proxy(this, {
-      get(target: Form, prop: PropertyKey) {
-        if (['originData', 'payload'].includes(<string>prop)) {
-          return target[prop];
-        }
-
-        if (target.propertyExists(prop)) {
-          return target.payload[prop];
-        }
-
-        return 'function' === typeof target[prop]
-          ? (...args) => target[prop].apply(target, args)
-          : undefined;
-      },
-      set(target: Form, prop: PropertyKey, value: any) {
-        if (target.propertyExists(prop)) {
-          target.payload[prop] = value;
-        }
-
-        return true;
-      }
-    });
+    return new Proxy(this, this.proxyHandler);
   }
 
   /**
@@ -168,15 +174,7 @@ export class Form {
       return this.payload;
     }
 
-    let formData = new FormData();
-
-    for (let field in this.payload) {
-      // @todo: add deep
-      const name = Array.isArray(this.payload[field]) ? `${field}[]` : field;
-      formData.append(name, this.payload[field]);
-    }
-
-    return formData;
+    return this.convertPayloadToFormData();
   }
 
   /**
@@ -194,7 +192,7 @@ export class Form {
    * @returns {void}
    */
   protected onSuccess(response: AxiosResponse): void {
-    console.log('SUCCESS');
+    // console.log('SUCCESS');
   }
 
   /**
@@ -214,18 +212,34 @@ export class Form {
   /**
    * @returns {boolean}
    */
-  private hasFiles(): boolean {
-    for (let field in this.payload) {
-      if (this.payload[field] instanceof File) {
-        return true;
-      } else if (Array.isArray(this.payload[field])) {
-        // @todo: check deeper
-        if (this.payload[field].some(item => item instanceof File)) {
-          return true;
-        }
-      }
+  private hasFiles(data: any = this.payload): boolean {
+    if (data instanceof File) return true;
+
+    if (Array.isArray(data)) {
+      return data.some(item => this.hasFiles(item));
+    }
+
+    try {
+      return Reflect.ownKeys(data)
+        .reduce((result, key) => result || this.hasFiles(data[key]), false);
+    } catch (e) {
     }
 
     return false;
+  }
+
+  /**
+   * @returns {FormData}
+   */
+  private convertPayloadToFormData(): FormData {
+    const formData: FormData = new FormData();
+
+    for (let field in this.payload) {
+      // @todo: add deep fields name convert
+      const name = Array.isArray(this.payload[field]) ? `${field}[]` : field;
+      formData.append(name, this.payload[field]);
+    }
+
+    return formData;
   }
 }

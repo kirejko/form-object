@@ -1,6 +1,6 @@
 import {AxiosError, AxiosPromise, AxiosRequestConfig, AxiosResponse} from "axios";
 import {HttpMethod} from "./src/helpers/http_method";
-import {RequestPayload} from "./src/helpers/request_payload";
+import {RequestPayload} from "./src/helpers/types";
 
 export class Errors<T extends object> {
   public errors: T;
